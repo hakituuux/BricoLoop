@@ -97,9 +97,13 @@ export function createApp() {
       }
 
       const demandes = []
+      let enAttente = 0
       for (let j = 0; j < loans.length; j++) {
         if (String(loans[j].toolId) !== String(tools[i].id)) {
           continue
+        }
+        if (loans[j].status === 'pending') {
+          enAttente = enAttente + 1
         }
         let emprunteur = 'quelquun'
         for (let k = 0; k < users.length; k++) {
@@ -111,6 +115,7 @@ export function createApp() {
           id: loans[j].id,
           startDate: loans[j].startDate,
           endDate: loans[j].endDate,
+          status: loans[j].status,
           emprunteur: emprunteur,
         })
       }
@@ -119,6 +124,7 @@ export function createApp() {
         id: tools[i].id,
         name: tools[i].name,
         category: tools[i].category,
+        pendingCount: enAttente,
         demandes: demandes,
       })
     }
