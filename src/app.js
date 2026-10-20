@@ -3,6 +3,14 @@ import { categories, loans, tools, users } from './data.js'
 import { signalerOutilAbime } from './routes/damage.js'
 import { createLoansRouter } from './routes/loans.js'
 
+// minuscules et sans accents : « Perçage » et « percage » se comparent pareil
+function normaliser(texte) {
+  return String(texte ?? '')
+    .normalize('NFD')
+    .replace(/\p{M}/gu, '')
+    .toLowerCase()
+}
+
 export function createApp() {
   const app = express()
   app.use(express.json())
@@ -12,9 +20,10 @@ export function createApp() {
   })
 
   // US-10 : ?category=Perçage pour filtrer le catalogue
+  // US-11 : ?q=perceuse cherche dans le nom et la description (combinable)
   // les outils disponibles d'abord, puis les autres
   app.get('/api/tools', (req, res) => {
-    const { category } = req.query
+    const { category, q } = req.query
     let liste = tools
 
     if (category !== undefined) {
@@ -24,6 +33,21 @@ export function createApp() {
           .json({ error: 'Catégorie inconnue', field: 'category' })
       }
       liste = liste.filter((t) => t.category === category)
+    }
+
+    if (q !== undefined) {
+      if (typeof q !== 'string') {
+        return res
+          .status(400)
+          .json({ error: 'Recherche invalide', field: 'q' })
+      }
+      // decision du PO : un q vide renvoie la liste complete
+      const motCle = normaliser(q.trim())
+      liste = liste.filter(
+        (t) =>
+          normaliser(t.name).includes(motCle) ||
+          normaliser(t.description).includes(motCle)
+      )
     }
 
     res.json([
