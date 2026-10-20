@@ -1,6 +1,6 @@
 import { Router } from 'express'
 import { loans, tools, users } from '../data.js'
-import { pretAccepteEnConflit } from '../overlap.js'
+import { pretAccepteEnConflit, pretEnCoursDe } from '../overlap.js'
 
 const FORMAT_DATE = /^\d{4}-\d{2}-\d{2}$/
 
@@ -69,6 +69,13 @@ function creerDemande(req, res) {
   }
   if (tool.status === 'unavailable') {
     return res.status(409).json({ error: 'Outil indisponible' })
+  }
+
+  // US-06 (decision du PO) : un seul outil emprunte a la fois par personne
+  if (pretEnCoursDe(user.id)) {
+    return res.status(409).json({
+      error: 'Vous avez déjà un outil emprunté : rendez-le avant d\'en réserver un autre',
+    })
   }
 
   // US-06 : pas de demande sur des dates deja promises a un autre voisin
@@ -201,6 +208,13 @@ function repondre(req, res, decision) {
       return res
         .status(409)
         .json({ error: 'Un prêt déjà accepté chevauche ces dates' })
+    }
+    // l'emprunteur a peut-etre fait plusieurs demandes en attente :
+    // une seule peut etre acceptee tant que l'outil n'est pas rendu
+    if (pretEnCoursDe(loan.borrowerId, loan.id)) {
+      return res
+        .status(409)
+        .json({ error: 'Cet emprunteur a déjà un outil emprunté' })
     }
     loan.status = 'accepted'
     tool.status = 'lent'
