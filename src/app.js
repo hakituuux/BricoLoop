@@ -1,6 +1,7 @@
 import express from 'express'
 import { tools, users } from './data.js'
 import { signalerOutilAbime } from './routes/damage.js'
+import { createLoansRouter } from './routes/loans.js'
 
 export function createApp() {
   const app = express()
@@ -28,6 +29,7 @@ export function createApp() {
   })
 
   app.post('/api/tools/:id/damage', signalerOutilAbime)
+  app.use('/api/loans', createLoansRouter())
 
   return app
 }

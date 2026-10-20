@@ -64,7 +64,7 @@ export const tools = [
     name: 'Tondeuse',
     category: 'Jardinage',
     description: 'Tondeuse a gazon',
-    status: 'available',
+    status: 'lent',
   },
   {
     id: '7',
@@ -81,5 +81,27 @@ export const tools = [
     category: 'Autre',
     description: 'Hache pour le bois',
     status: 'available',
+  },
+]
+
+// statuts d'un pret : pending, accepted, refused, returned
+export const loans = [
+  // une demande de demo en attente : Pierre veut emprunter la pelle de Jacque
+  {
+    id: '1',
+    toolId: '3',
+    borrowerId: '1',
+    startDate: '2026-11-02',
+    endDate: '2026-11-05',
+    status: 'pending',
+  },
+  // un pret de demo deja accepte : Pierre a emprunte la tondeuse de Paul
+  {
+    id: '2',
+    toolId: '6',
+    borrowerId: '1',
+    startDate: '2026-10-15',
+    endDate: '2026-10-25',
+    status: 'accepted',
   },
 ]
