@@ -64,7 +64,7 @@ export const tools = [
     name: 'Tondeuse',
     category: 'Jardinage',
     description: 'Tondeuse a gazon',
-    status: 'available',
+    status: 'lent',
   },
   {
     id: '7',
