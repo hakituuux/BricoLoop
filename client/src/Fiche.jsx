@@ -13,6 +13,9 @@ function Fiche(props) {
   const [fin, setFin] = useState('')
   const [message, setMessage] = useState('')
   const [erreurDemande, setErreurDemande] = useState('')
+  const [montrerSignalement, setMontrerSignalement] = useState(false)
+  const [commentaire, setCommentaire] = useState('')
+  const [erreurSignalement, setErreurSignalement] = useState('')
 
   useEffect(() => {
     let annule = false
@@ -62,6 +65,28 @@ function Fiche(props) {
     )
   }
 
+  // le proprietaire signale son outil abime : il devient indisponible
+  async function signalerAbime(e) {
+    e.preventDefault()
+    setErreurSignalement('')
+
+    const res = await apiFetch(
+      '/api/tools/' + props.outilId + '/damage',
+      profil.userId,
+      { method: 'POST', body: { comment: commentaire } }
+    )
+
+    if (!res.ok) {
+      setErreurSignalement(res.error)
+      return
+    }
+
+    // on garde firstName / district renvoyes par la fiche
+    setOutil({ ...outil, ...res.data })
+    setMontrerSignalement(false)
+    setCommentaire('')
+  }
+
   if (chargement) {
     return <p>Chargement de la fiche...</p>
   }
@@ -90,6 +115,11 @@ function Fiche(props) {
       <p>{outil.category}</p>
       <p>{description}</p>
       <p className="badge">{libelleStatut(outil.status)}</p>
+      {outil.damage && (
+        <p className="erreur">
+          Signalé abîmé{outil.damage.comment && ' : ' + outil.damage.comment}
+        </p>
+      )}
       <p>
         Proposé par {outil.firstName} · {outil.district}
       </p>
@@ -105,6 +135,45 @@ function Fiche(props) {
       )}
 
       {aMoi && <p>C'est ton outil.</p>}
+
+      {aMoi && dispo && !montrerSignalement && (
+        <button
+          onClick={() => {
+            setMontrerSignalement(true)
+          }}
+        >
+          Signaler abîmé
+        </button>
+      )}
+
+      {montrerSignalement && (
+        <form onSubmit={signalerAbime}>
+          <p>
+            <label>
+              Qu'est-ce qui est abîmé ? (facultatif){' '}
+              <textarea
+                maxLength={300}
+                value={commentaire}
+                onChange={(e) => {
+                  setCommentaire(e.target.value)
+                }}
+              />
+            </label>
+          </p>
+          <button type="submit">Confirmer le signalement</button>{' '}
+          <button
+            type="button"
+            onClick={() => {
+              setMontrerSignalement(false)
+            }}
+          >
+            Annuler
+          </button>
+          {erreurSignalement !== '' && (
+            <p className="erreur">{erreurSignalement}</p>
+          )}
+        </form>
+      )}
 
       {montrerForm && (
         <form onSubmit={envoyer}>

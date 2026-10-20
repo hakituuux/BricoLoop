@@ -64,6 +64,7 @@ function Catalogue(props) {
             </p>
             <p>{outil.category}</p>
             <p className="badge">{libelleStatut(outil.status)}</p>
+            {outil.damage && <p className="erreur">Abîmé</p>}
           </div>
         )
       })}
