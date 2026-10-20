@@ -1,0 +1,32 @@
+.page {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+header {
+  background: white;
+  border: 1px solid #ddd;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+header h1 {
+  margin: 0 0 8px 0;
+}
+
+.menu {
+  margin-top: 12px;
+}
+
+.menu button {
+  margin-right: 8px;
+  padding: 6px 10px;
+  cursor: pointer;
+}
+
+.contenu {
+  background: white;
+  border: 1px solid #ddd;
+  padding: 16px;
+}
