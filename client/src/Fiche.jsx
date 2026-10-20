@@ -3,6 +3,14 @@ import { apiFetch } from './api.js'
 import { useProfil } from './ProfilContext.jsx'
 import { libelleStatut } from './statuts.js'
 
+// date du jour au format AAAA-MM-JJ, comme les input date
+function aujourdhui() {
+  const d = new Date()
+  const mois = String(d.getMonth() + 1).padStart(2, '0')
+  const jour = String(d.getDate()).padStart(2, '0')
+  return d.getFullYear() + '-' + mois + '-' + jour
+}
+
 function Fiche(props) {
   const profil = useProfil()
   const [outil, setOutil] = useState(null)
@@ -183,6 +191,7 @@ function Fiche(props) {
               <input
                 type="date"
                 value={debut}
+                min={aujourdhui()}
                 onChange={(e) => {
                   setDebut(e.target.value)
                 }}
@@ -195,6 +204,7 @@ function Fiche(props) {
               <input
                 type="date"
                 value={fin}
+                min={debut || aujourdhui()}
                 onChange={(e) => {
                   setFin(e.target.value)
                 }}
