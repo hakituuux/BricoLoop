@@ -1,5 +1,7 @@
 import express from 'express'
 import { loans, tools, users } from './data.js'
+import { signalerOutilAbime } from './routes/damage.js'
+import { createLoansRouter } from './routes/loans.js'
 
 export function createApp() {
   const app = express()
@@ -175,6 +177,10 @@ export function createApp() {
 
     res.json(mine)
   })
+
+  // rebranches apres le merge US-08 qui les avait perdus
+  app.post('/api/tools/:id/damage', signalerOutilAbime)
+  app.use('/api/loans', createLoansRouter())
 
   return app
 }
