@@ -1,0 +1,43 @@
+.demande-emprunt {
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid #ddd;
+}
+
+.demande-emprunt h3 {
+  margin: 0 0 8px 0;
+}
+
+.demande-emprunt .dates label {
+  display: inline-block;
+  margin-right: 16px;
+  margin-bottom: 8px;
+}
+
+.demande-emprunt input {
+  font-family: Arial, sans-serif;
+  font-size: 16px;
+}
+
+.demande-emprunt button {
+  padding: 6px 10px;
+  cursor: pointer;
+}
+
+.demande-emprunt .message {
+  margin: 12px 0 0 0;
+  padding: 8px;
+  border: 1px solid;
+}
+
+.demande-emprunt .succes {
+  color: #1d5e2a;
+  background: #e6f4e8;
+  border-color: #9ccfa5;
+}
+
+.demande-emprunt .erreur {
+  color: #8a1c1c;
+  background: #fbeaea;
+  border-color: #e3a3a3;
+}
