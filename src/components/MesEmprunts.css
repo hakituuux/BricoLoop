@@ -1,0 +1,43 @@
+.mes-emprunts {
+  margin-top: 16px;
+}
+
+.mes-emprunts h3 {
+  margin: 0 0 8px 0;
+}
+
+.mes-emprunts table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.mes-emprunts th,
+.mes-emprunts td {
+  text-align: left;
+  padding: 6px 8px;
+  border-bottom: 1px solid #ddd;
+}
+
+.mes-emprunts .statut.pending {
+  color: #8a5a00;
+}
+
+.mes-emprunts .statut.accepted {
+  color: #1d5e2a;
+}
+
+.mes-emprunts .statut.refused {
+  color: #8a1c1c;
+}
+
+.mes-emprunts .message {
+  margin: 12px 0 0 0;
+  padding: 8px;
+  border: 1px solid;
+}
+
+.mes-emprunts .erreur {
+  color: #8a1c1c;
+  background: #fbeaea;
+  border-color: #e3a3a3;
+}
