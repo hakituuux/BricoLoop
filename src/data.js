@@ -127,4 +127,21 @@ export const loans = [
     endDate: '2026-10-23',
     status: 'accepted',
   },
+  // US-14 : prets deja rendus, pour avoir un historique sur la tondeuse
+  {
+    id: '6',
+    toolId: '6',
+    borrowerId: '3',
+    startDate: '2026-09-05',
+    endDate: '2026-09-07',
+    status: 'returned',
+  },
+  {
+    id: '7',
+    toolId: '6',
+    borrowerId: '4',
+    startDate: '2026-10-01',
+    endDate: '2026-10-03',
+    status: 'returned',
+  },
 ]

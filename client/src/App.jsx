@@ -2,16 +2,17 @@ import { useEffect, useState } from 'react'
 import './App.css'
 import { apiFetch } from './api.js'
 import { ProfilContext } from './ProfilContext.jsx'
-import ToolPage from './ToolPage.jsx'
+import Catalogue from './Catalogue.jsx'
+import Fiche from './Fiche.jsx'
+import MesOutils from './MesOutils.jsx'
 
 function App() {
-  const [page, setPage] = useState('accueil')
-  const [toolId, setToolId] = useState(null)
-  const [tools, setTools] = useState([])
   const [users, setUsers] = useState([])
   const [userId, setUserId] = useState('')
   const [erreurUsers, setErreurUsers] = useState('')
   const [chargement, setChargement] = useState(true)
+  const [page, setPage] = useState('accueil')
+  const [outilId, setOutilId] = useState(null)
 
   useEffect(() => {
     let annule = false
@@ -37,32 +38,8 @@ function App() {
     }
   }, [])
 
-  // liste minimale pour pouvoir ouvrir une fiche (le vrai catalogue = autre US)
-  useEffect(() => {
-    if (page !== 'catalogue') {
-      return
-    }
-
-    let annule = false
-
-    async function chargerOutils() {
-      const res = await apiFetch('/api/tools', userId)
-      if (annule) {
-        return
-      }
-      setTools(res.ok ? res.data : [])
-    }
-
-    chargerOutils()
-
-    return () => {
-      annule = true
-    }
-  }, [page, userId])
-
   let user = null
   for (let i = 0; i < users.length; i++) {
-    // la valeur d'un <select> est toujours une string, l'id de l'API peut etre un nombre
     if (String(users[i].id) === String(userId)) {
       user = users[i]
     }
@@ -98,51 +75,81 @@ function App() {
           {erreurUsers && <p className="erreur">{erreurUsers}</p>}
 
           <div className="menu">
-            <button onClick={() => setPage('accueil')}>Accueil</button>
-            <button onClick={() => setPage('catalogue')}>Catalogue</button>
+            <button
+              onClick={() => {
+                setPage('accueil')
+              }}
+            >
+              Accueil
+            </button>
+            <button
+              onClick={() => {
+                setPage('catalogue')
+              }}
+            >
+              Catalogue
+            </button>
+            <button
+              onClick={() => {
+                setPage('mes-outils')
+              }}
+            >
+              Ou sont mes outils
+            </button>
           </div>
         </header>
 
         <div className="contenu">
           {page === 'accueil' && (
             <div>
+              <h2>Accueil</h2>
               {user && (
                 <p>
-                  Profil actif : {user.firstName}, quartier {user.district}. Les
-                  appels a l'API partiront avec l'en-tete X-User-Id.
+                  Bonjour {user.firstName}, quartier {user.district}.
                 </p>
               )}
-              {!user && <p>Aucun profil choisi pour le moment.</p>}
-              <p>
-                La base commune est en place. Catalogue, fiche, ajout d'outil et
-                demande d'emprunt seront branches story par story.
-              </p>
+              {!user && <p>Choisis un profil, puis ouvre le catalogue.</p>}
+              <button
+                onClick={() => {
+                  setPage('catalogue')
+                }}
+              >
+                Voir le catalogue
+              </button>{' '}
+              <button
+                onClick={() => {
+                  setPage('mes-outils')
+                }}
+              >
+                Ou sont mes outils
+              </button>
             </div>
           )}
-
           {page === 'catalogue' && (
-            <div>
-              <h2>Catalogue</h2>
-              {tools.length === 0 && <p>Aucun outil pour le moment.</p>}
-              <ul>
-                {tools.map((t) => (
-                  <li key={t.id}>
-                    <button
-                      onClick={() => {
-                        setToolId(t.id)
-                        setPage('outil')
-                      }}
-                    >
-                      {t.name}
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </div>
+            <Catalogue
+              onRetour={() => {
+                setPage('accueil')
+              }}
+              onChoisir={(id) => {
+                setOutilId(id)
+                setPage('fiche')
+              }}
+            />
           )}
-
-          {page === 'outil' && (
-            <ToolPage toolId={toolId} onBack={() => setPage('catalogue')} />
+          {page === 'mes-outils' && (
+            <MesOutils
+              onRetour={() => {
+                setPage('accueil')
+              }}
+            />
+          )}
+          {page === 'fiche' && (
+            <Fiche
+              outilId={outilId}
+              onRetour={() => {
+                setPage('catalogue')
+              }}
+            />
           )}
         </div>
       </div>
