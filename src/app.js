@@ -1,5 +1,7 @@
 import express from 'express'
-import { loans, tools, users } from './data.js'
+import { categories, loans, tools, users } from './data.js'
+import { signalerOutilAbime } from './routes/damage.js'
+import { createLoansRouter } from './routes/loans.js'
 
 export function createApp() {
   const app = express()
@@ -9,19 +11,25 @@ export function createApp() {
     res.json(users)
   })
 
-  app.get('/api/tools', (_req, res) => {
-    const liste = []
-    for (let i = 0; i < tools.length; i++) {
-      if (tools[i].status === 'available') {
-        liste.push(tools[i])
+  // US-10 : ?category=Perçage pour filtrer le catalogue
+  // les outils disponibles d'abord, puis les autres
+  app.get('/api/tools', (req, res) => {
+    const { category } = req.query
+    let liste = tools
+
+    if (category !== undefined) {
+      if (!categories.includes(category)) {
+        return res
+          .status(400)
+          .json({ error: 'Catégorie inconnue', field: 'category' })
       }
+      liste = liste.filter((t) => t.category === category)
     }
-    for (let i = 0; i < tools.length; i++) {
-      if (tools[i].status !== 'available') {
-        liste.push(tools[i])
-      }
-    }
-    res.json(liste)
+
+    res.json([
+      ...liste.filter((t) => t.status === 'available'),
+      ...liste.filter((t) => t.status !== 'available'),
+    ])
   })
 
   app.get('/api/tools/:id', (req, res) => {
@@ -175,6 +183,9 @@ export function createApp() {
 
     res.json(mine)
   })
+
+  app.post('/api/tools/:id/damage', signalerOutilAbime)
+  app.use('/api/loans', createLoansRouter())
 
   return app
 }
