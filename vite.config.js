@@ -1,7 +1,12 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
-// config de base, on verra plus tard si on a besoin d'un proxy vers l'api
+// les appels /api partent vers le serveur express (npm start, port 3000)
 export default defineConfig({
   plugins: [react()],
+  server: {
+    proxy: {
+      '/api': 'http://localhost:3000',
+    },
+  },
 })
