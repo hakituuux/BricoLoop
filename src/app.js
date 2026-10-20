@@ -102,64 +102,6 @@ export function createApp() {
     res.json(liste)
   })
 
-  app.post('/api/loans', (req, res) => {
-    const userId = req.header('X-User-Id')
-    if (!userId) {
-      res.status(401).json({ error: 'Choisissez votre profil' })
-      return
-    }
-
-    const body = req.body || {}
-    const startDate = body.startDate
-    const endDate = body.endDate
-    const toolId = body.toolId
-
-    if (!startDate || !endDate) {
-      res.status(400).json({
-        error: 'Les dates sont obligatoires',
-        field: 'startDate',
-      })
-      return
-    }
-    if (endDate < startDate) {
-      res.status(400).json({
-        error: 'La date de fin est avant la date de debut',
-        field: 'endDate',
-      })
-      return
-    }
-
-    let outil = null
-    for (let i = 0; i < tools.length; i++) {
-      if (String(tools[i].id) === String(toolId)) {
-        outil = tools[i]
-      }
-    }
-    if (!outil) {
-      res.status(404).json({ error: "Cet outil n'existe pas" })
-      return
-    }
-    if (String(outil.ownerId) === String(userId)) {
-      res.status(400).json({ error: 'Tu ne peux pas emprunter ton propre outil' })
-      return
-    }
-    if (outil.status !== 'available') {
-      res.status(409).json({ error: "Cet outil n'est pas disponible" })
-      return
-    }
-
-    const demande = {
-      id: String(loans.length + 1),
-      toolId: String(toolId),
-      borrowerId: String(userId),
-      startDate: startDate,
-      endDate: endDate,
-      status: 'pending',
-    }
-    loans.push(demande)
-    res.status(201).json(demande)
-  })
-
   // US-08 : mes demandes (X-User-Id), avec le nom de l'outil,
   // triees par date de debut croissante
   app.get('/api/loans/mine', (req, res) => {
@@ -184,6 +126,7 @@ export function createApp() {
     res.json(mine)
   })
 
+  // rebranches apres le merge US-08 qui les avait perdus
   app.post('/api/tools/:id/damage', signalerOutilAbime)
   app.use('/api/loans', createLoansRouter())
 

@@ -44,12 +44,36 @@ describe('US-05 · accepter ou refuser une demande', () => {
       expect(res.body.status).toBe('lent');
     });
 
-    it('409 si l\'outil est déjà prêté par ailleurs', async () => {
-      preparerDemande('pending', 'lent');
+    // US-06 : le garde-fou porte sur les dates, plus sur le statut de l'outil
+    it('409 si un prêt accepté chevauche les dates de la demande', async () => {
+      loans.push({
+        id: 'autre',
+        toolId: '2',
+        borrowerId: '3',
+        startDate: '2026-11-04',
+        endDate: '2026-11-08',
+        status: 'accepted',
+      });
       const res = await repondre('accept', '2');
 
       expect(res.status).toBe(409);
       expect(loans[0].status).toBe('pending');
+    });
+
+    it('accepte si le prêt accepté se termine la veille de la demande', async () => {
+      loans.push({
+        id: 'autre',
+        toolId: '2',
+        borrowerId: '3',
+        startDate: '2026-10-28',
+        endDate: '2026-11-01',
+        status: 'accepted',
+      });
+      marteau.status = 'lent';
+      const res = await repondre('accept', '2');
+
+      expect(res.status).toBe(200);
+      expect(loans[0].status).toBe('accepted');
     });
   });
 
