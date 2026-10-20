@@ -2,12 +2,14 @@ import { useEffect, useState } from 'react'
 import './App.css'
 import { apiFetch } from './api.js'
 import { ProfilContext } from './ProfilContext.jsx'
+import Catalogue from './Catalogue.jsx'
 
 function App() {
   const [users, setUsers] = useState([])
   const [userId, setUserId] = useState('')
   const [erreurUsers, setErreurUsers] = useState('')
   const [chargement, setChargement] = useState(true)
+  const [page, setPage] = useState('accueil')
 
   useEffect(() => {
     let annule = false
@@ -68,20 +70,51 @@ function App() {
 
           {chargement && <p>Chargement des voisins...</p>}
           {erreurUsers && <p className="erreur">{erreurUsers}</p>}
+
+          <div className="menu">
+            <button
+              onClick={() => {
+                setPage('accueil')
+              }}
+            >
+              Accueil
+            </button>
+            <button
+              onClick={() => {
+                setPage('catalogue')
+              }}
+            >
+              Catalogue
+            </button>
+          </div>
         </header>
 
         <div className="contenu">
-          {user && (
-            <p>
-              Profil actif : {user.firstName}, quartier {user.district}. Les
-              appels a l'API partiront avec l'en-tete X-User-Id.
-            </p>
+          {page === 'accueil' && (
+            <div>
+              <h2>Accueil</h2>
+              {user && (
+                <p>
+                  Bonjour {user.firstName}, quartier {user.district}.
+                </p>
+              )}
+              {!user && <p>Choisis un profil, puis ouvre le catalogue.</p>}
+              <button
+                onClick={() => {
+                  setPage('catalogue')
+                }}
+              >
+                Voir le catalogue
+              </button>
+            </div>
           )}
-          {!user && <p>Aucun profil choisi pour le moment.</p>}
-          <p>
-            La base commune est en place. Catalogue, fiche, ajout d'outil et
-            demande d'emprunt seront branches story par story.
-          </p>
+          {page === 'catalogue' && (
+            <Catalogue
+              onRetour={() => {
+                setPage('accueil')
+              }}
+            />
+          )}
         </div>
       </div>
     </ProfilContext.Provider>

@@ -15,6 +15,14 @@ header h1 {
   margin: 0 0 8px 0;
 }
 
+.menu {
+  margin-top: 12px;
+}
+
+.menu button {
+  margin-right: 8px;
+}
+
 .erreur {
   color: #a32020;
 }
@@ -23,4 +31,17 @@ header h1 {
   background: white;
   border: 1px solid #ddd;
   padding: 16px;
+}
+
+.carte {
+  border: 1px solid #ccc;
+  padding: 8px;
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+
+.badge {
+  display: inline-block;
+  background: #e7e2d6;
+  padding: 2px 8px;
 }

@@ -5,14 +5,23 @@ export function createApp() {
   const app = express()
   app.use(express.json())
 
-  // pour le selecteur de profil, commun a tous les ecrans
   app.get('/api/users', (_req, res) => {
     res.json(users)
   })
 
-  // le test deja present sur main appelle cette route
   app.get('/api/tools', (_req, res) => {
-    res.json(tools)
+    const liste = []
+    for (let i = 0; i < tools.length; i++) {
+      if (tools[i].status === 'available') {
+        liste.push(tools[i])
+      }
+    }
+    for (let i = 0; i < tools.length; i++) {
+      if (tools[i].status !== 'available') {
+        liste.push(tools[i])
+      }
+    }
+    res.json(liste)
   })
 
   return app
