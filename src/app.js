@@ -1,5 +1,6 @@
 import express from 'express'
 import { tools, users } from './data.js'
+import { signalerOutilAbime } from './routes/damage.js'
 
 export function createApp() {
   const app = express()
@@ -25,6 +26,8 @@ export function createApp() {
     const owner = users.find((u) => u.id === tool.ownerId) ?? null
     res.json({ ...tool, owner })
   })
+
+  app.post('/api/tools/:id/damage', signalerOutilAbime)
 
   return app
 }

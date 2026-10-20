@@ -86,6 +86,11 @@ function ToolPage({ toolId, onBack }) {
       <p>Catégorie : {tool.category}</p>
       <p>{tool.description || 'Pas de description'}</p>
       <p>Statut : {libelleStatut(tool.status)}</p>
+      {tool.damage && (
+        <p className="erreur">
+          Signalé abîmé{tool.damage.comment && ' : ' + tool.damage.comment}
+        </p>
+      )}
       {tool.owner && (
         <p>
           Proposé par {tool.owner.firstName} · {tool.owner.district}
