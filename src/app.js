@@ -1,5 +1,6 @@
 import express from 'express'
 import { loans, tools, users } from './data.js'
+import { createLoansRouter } from './routes/loans.js'
 
 export function createApp() {
   const app = express()
@@ -65,9 +66,13 @@ export function createApp() {
       }
 
       const demandes = []
+      let enAttente = 0
       for (let j = 0; j < loans.length; j++) {
         if (String(loans[j].toolId) !== String(tools[i].id)) {
           continue
+        }
+        if (loans[j].status === 'pending') {
+          enAttente = enAttente + 1
         }
         let emprunteur = 'quelquun'
         for (let k = 0; k < users.length; k++) {
@@ -79,6 +84,7 @@ export function createApp() {
           id: loans[j].id,
           startDate: loans[j].startDate,
           endDate: loans[j].endDate,
+          status: loans[j].status,
           emprunteur: emprunteur,
         })
       }
@@ -87,6 +93,7 @@ export function createApp() {
         id: tools[i].id,
         name: tools[i].name,
         category: tools[i].category,
+        pendingCount: enAttente,
         demandes: demandes,
       })
     }
@@ -151,6 +158,8 @@ export function createApp() {
     loans.push(demande)
     res.status(201).json(demande)
   })
+
+  app.use('/api/loans', createLoansRouter())
 
   // US-08 : mes demandes (X-User-Id), avec le nom de l'outil,
   // triees par date de debut croissante

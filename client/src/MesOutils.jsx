@@ -26,10 +26,28 @@ function ouEstOutil(demande) {
   return 'Chez ' + demande.emprunteur
 }
 
+function libelleDemande(status) {
+  if (status === 'pending') {
+    return 'en attente'
+  }
+  if (status === 'accepted') {
+    return 'acceptee'
+  }
+  if (status === 'refused') {
+    return 'refusee'
+  }
+  if (status === 'returned') {
+    return 'rendue'
+  }
+  return status
+}
+
 function MesOutils(props) {
   const profil = useProfil()
   const [outils, setOutils] = useState(null)
   const [erreur, setErreur] = useState('')
+  const [message, setMessage] = useState('')
+  const [rafraichi, setRafraichi] = useState(0)
 
   useEffect(() => {
     let annule = false
@@ -58,7 +76,29 @@ function MesOutils(props) {
     return () => {
       annule = true
     }
-  }, [profil.userId])
+  }, [profil.userId, rafraichi])
+
+  async function repondre(id, action) {
+    setMessage('')
+    setErreur('')
+    const res = await apiFetch('/api/loans/' + id + '/' + action, profil.userId, {
+      method: 'POST',
+    })
+    if (!res.ok) {
+      setErreur(res.error)
+      return
+    }
+    if (action === 'accept') {
+      setMessage('Demande acceptee, l outil est prete')
+    }
+    if (action === 'refuse') {
+      setMessage('Demande refusee')
+    }
+    if (action === 'return') {
+      setMessage('Outil rendu, il est de nouveau chez toi')
+    }
+    setRafraichi(rafraichi + 1)
+  }
 
   if (outils === null && erreur === '') {
     return <p>Chargement de tes outils...</p>
@@ -68,6 +108,7 @@ function MesOutils(props) {
     <div>
       <button onClick={props.onRetour}>Retour</button>
       <h2>Ou sont mes outils</h2>
+      {message !== '' && <p className="ok">{message}</p>}
       {erreur !== '' && <p className="erreur">{erreur}</p>}
       {outils && outils.length === 0 && erreur === '' && (
         <p>Tu n'as pas d'outil.</p>
@@ -79,14 +120,45 @@ function MesOutils(props) {
               <p>
                 <b>{outil.name}</b> ({outil.category})
               </p>
+              <p>Demandes en attente : {outil.pendingCount}</p>
               {outil.demandes.length === 0 && <p>Il est chez moi.</p>}
               {outil.demandes.map((demande) => {
                 return (
                   <div key={demande.id}>
                     <p>
-                      Du {demande.startDate} au {demande.endDate}
+                      Du {demande.startDate} au {demande.endDate}, chez{' '}
+                      {demande.emprunteur} ({libelleDemande(demande.status)})
                     </p>
                     <p>{ouEstOutil(demande)}</p>
+                    {demande.status === 'pending' && (
+                      <p>
+                        <button
+                          onClick={() => {
+                            repondre(demande.id, 'accept')
+                          }}
+                        >
+                          Accepter
+                        </button>{' '}
+                        <button
+                          onClick={() => {
+                            repondre(demande.id, 'refuse')
+                          }}
+                        >
+                          Refuser
+                        </button>
+                      </p>
+                    )}
+                    {demande.status === 'accepted' && (
+                      <p>
+                        <button
+                          onClick={() => {
+                            repondre(demande.id, 'return')
+                          }}
+                        >
+                          Declarer le retour
+                        </button>
+                      </p>
+                    )}
                   </div>
                 )
               })}
