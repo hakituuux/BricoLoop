@@ -1,5 +1,5 @@
 import express from 'express'
-import { users } from './data.js'
+import { tools, users } from './data.js'
 
 export function createApp() {
   const app = express()
@@ -8,6 +8,11 @@ export function createApp() {
   // pour le selecteur de profil, commun a tous les ecrans
   app.get('/api/users', (_req, res) => {
     res.json(users)
+  })
+
+  // le test deja present sur main appelle cette route
+  app.get('/api/tools', (_req, res) => {
+    res.json(tools)
   })
 
   return app
