@@ -1,7 +1,10 @@
-import js from '@eslint/js';
-import globals from 'globals';
+import js from '@eslint/js'
+import globals from 'globals'
 
 export default [
+  {
+    ignores: ['client/**', 'node_modules/**', 'dist/**'],
+  },
   js.configs.recommended,
   {
     languageOptions: {
@@ -10,4 +13,4 @@ export default [
       globals: { ...globals.node },
     },
   },
-];
+]

@@ -4,18 +4,13 @@
   "version": "0.0.1",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview",
     "start": "node src/server.js",
     "lint": "eslint . --max-warnings=0",
     "test": "vitest run",
     "check": "npm run lint && npm test"
   },
   "dependencies": {
-    "express": "^5.3.0",
-    "react": "^19.2.0",
-    "react-dom": "^19.2.0"
+    "express": "^4.21.2"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
@@ -26,7 +21,6 @@
     "globals": "^17.13.0",
     "jsdom": "^29.1.1",
     "supertest": "^7.3.1",
-    "vite": "^7.1.10",
     "vitest": "^5.0.5"
   }
 }
