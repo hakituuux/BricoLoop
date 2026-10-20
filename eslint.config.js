@@ -3,7 +3,7 @@ import globals from 'globals'
 
 export default [
   {
-    ignores: ['client/**', 'node_modules/**', 'dist/**'],
+    ignores: ['client/**', 'node_modules/**', 'dist/**', 'coverage/**'],
   },
   js.configs.recommended,
   {
@@ -13,4 +13,12 @@ export default [
       globals: { ...globals.node },
     },
   },
-]
+  {
+    // fichiers React : JSX + globals navigateur (document, window, fetch...)
+    files: ['src/**/*.jsx'],
+    languageOptions: {
+      parserOptions: { ecmaFeatures: { jsx: true } },
+      globals: { ...globals.browser },
+    },
+  },
+];

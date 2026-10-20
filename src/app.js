@@ -10,9 +10,20 @@ export function createApp() {
     res.json(users)
   })
 
-  // le test deja present sur main appelle cette route
   app.get('/api/tools', (_req, res) => {
     res.json(tools)
+  })
+
+  // fiche outil : on ajoute le proprietaire (retrouve avec ownerId)
+  app.get('/api/tools/:id', (req, res) => {
+    const tool = tools.find((t) => t.id === req.params.id)
+
+    if (!tool) {
+      return res.status(404).json({ error: 'Outil introuvable' })
+    }
+
+    const owner = users.find((u) => u.id === tool.ownerId) ?? null
+    res.json({ ...tool, owner })
   })
 
   return app
