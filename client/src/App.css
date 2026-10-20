@@ -15,14 +15,8 @@ header h1 {
   margin: 0 0 8px 0;
 }
 
-.menu {
-  margin-top: 12px;
-}
-
-.menu button {
-  margin-right: 8px;
-  padding: 6px 10px;
-  cursor: pointer;
+.erreur {
+  color: #a32020;
 }
 
 .contenu {
