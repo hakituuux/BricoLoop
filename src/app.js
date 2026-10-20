@@ -1,7 +1,15 @@
 import express from 'express'
-import { loans, tools, users } from './data.js'
+import { categories, loans, tools, users } from './data.js'
 import { signalerOutilAbime } from './routes/damage.js'
 import { createLoansRouter } from './routes/loans.js'
+
+// minuscules et sans accents : « Perçage » et « percage » se comparent pareil
+function normaliser(texte) {
+  return String(texte ?? '')
+    .normalize('NFD')
+    .replace(/\p{M}/gu, '')
+    .toLowerCase()
+}
 
 export function createApp() {
   const app = express()
@@ -11,19 +19,41 @@ export function createApp() {
     res.json(users)
   })
 
-  app.get('/api/tools', (_req, res) => {
-    const liste = []
-    for (let i = 0; i < tools.length; i++) {
-      if (tools[i].status === 'available') {
-        liste.push(tools[i])
+  // US-10 : ?category=Perçage pour filtrer le catalogue
+  // US-11 : ?q=perceuse cherche dans le nom et la description (combinable)
+  // les outils disponibles d'abord, puis les autres
+  app.get('/api/tools', (req, res) => {
+    const { category, q } = req.query
+    let liste = tools
+
+    if (category !== undefined) {
+      if (!categories.includes(category)) {
+        return res
+          .status(400)
+          .json({ error: 'Catégorie inconnue', field: 'category' })
       }
+      liste = liste.filter((t) => t.category === category)
     }
-    for (let i = 0; i < tools.length; i++) {
-      if (tools[i].status !== 'available') {
-        liste.push(tools[i])
+
+    if (q !== undefined) {
+      if (typeof q !== 'string') {
+        return res
+          .status(400)
+          .json({ error: 'Recherche invalide', field: 'q' })
       }
+      // decision du PO : un q vide renvoie la liste complete
+      const motCle = normaliser(q.trim())
+      liste = liste.filter(
+        (t) =>
+          normaliser(t.name).includes(motCle) ||
+          normaliser(t.description).includes(motCle)
+      )
     }
-    res.json(liste)
+
+    res.json([
+      ...liste.filter((t) => t.status === 'available'),
+      ...liste.filter((t) => t.status !== 'available'),
+    ])
   })
 
   app.get('/api/tools/:id', (req, res) => {
@@ -94,64 +124,6 @@ export function createApp() {
     }
 
     res.json(liste)
-  })
-
-  app.post('/api/loans', (req, res) => {
-    const userId = req.header('X-User-Id')
-    if (!userId) {
-      res.status(401).json({ error: 'Choisissez votre profil' })
-      return
-    }
-
-    const body = req.body || {}
-    const startDate = body.startDate
-    const endDate = body.endDate
-    const toolId = body.toolId
-
-    if (!startDate || !endDate) {
-      res.status(400).json({
-        error: 'Les dates sont obligatoires',
-        field: 'startDate',
-      })
-      return
-    }
-    if (endDate < startDate) {
-      res.status(400).json({
-        error: 'La date de fin est avant la date de debut',
-        field: 'endDate',
-      })
-      return
-    }
-
-    let outil = null
-    for (let i = 0; i < tools.length; i++) {
-      if (String(tools[i].id) === String(toolId)) {
-        outil = tools[i]
-      }
-    }
-    if (!outil) {
-      res.status(404).json({ error: "Cet outil n'existe pas" })
-      return
-    }
-    if (String(outil.ownerId) === String(userId)) {
-      res.status(400).json({ error: 'Tu ne peux pas emprunter ton propre outil' })
-      return
-    }
-    if (outil.status !== 'available') {
-      res.status(409).json({ error: "Cet outil n'est pas disponible" })
-      return
-    }
-
-    const demande = {
-      id: String(loans.length + 1),
-      toolId: String(toolId),
-      borrowerId: String(userId),
-      startDate: startDate,
-      endDate: endDate,
-      status: 'pending',
-    }
-    loans.push(demande)
-    res.status(201).json(demande)
   })
 
   // US-08 : mes demandes (X-User-Id), avec le nom de l'outil,
