@@ -1,5 +1,7 @@
 import express from 'express'
-import { loans, tools, users } from './data.js'
+import { categories, loans, tools, users } from './data.js'
+import { signalerOutilAbime } from './routes/damage.js'
+import { createLoansRouter } from './routes/loans.js'
 
 export function createApp() {
   const app = express()
@@ -10,8 +12,20 @@ export function createApp() {
     res.json(users)
   })
 
-  app.get('/api/tools', (_req, res) => {
-    res.json(tools)
+  // US-10 : ?category=Perçage pour filtrer le catalogue
+  app.get('/api/tools', (req, res) => {
+    const { category } = req.query
+    if (category === undefined) {
+      return res.json(tools)
+    }
+
+    if (!categories.includes(category)) {
+      return res
+        .status(400)
+        .json({ error: 'Catégorie inconnue', field: 'category' })
+    }
+
+    res.json(tools.filter((t) => t.category === category))
   })
 
   // fiche outil : on ajoute le proprietaire (retrouve avec ownerId)
@@ -49,6 +63,9 @@ export function createApp() {
 
     res.json(mine)
   })
+
+  app.post('/api/tools/:id/damage', signalerOutilAbime)
+  app.use('/api/loans', createLoansRouter())
 
   return app
 }
