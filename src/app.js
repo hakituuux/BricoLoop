@@ -1,6 +1,7 @@
 import express from 'express'
 import { categories, loans, tools, users } from './data.js'
 import { signalerOutilAbime } from './routes/damage.js'
+import { historiqueOutil } from './routes/history.js'
 import { createLoansRouter } from './routes/loans.js'
 
 // minuscules et sans accents : « Perçage » et « percage » se comparent pareil
@@ -158,6 +159,7 @@ export function createApp() {
 
   // rebranches apres le merge US-08 qui les avait perdus
   app.post('/api/tools/:id/damage', signalerOutilAbime)
+  app.get('/api/tools/:id/history', historiqueOutil)
   app.use('/api/loans', createLoansRouter())
 
   return app
