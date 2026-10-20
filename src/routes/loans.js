@@ -126,6 +126,45 @@ export function createLoansRouter() {
     res.json({ ...loan, tool })
   })
 
+  // US-13 : le proprietaire note l'emprunteur apres le retour
+  // POST /api/loans/:id/rating  body { rating } (entier de 1 a 5)
+  // → 200 pret avec sa note · 400 { error, field } · 403 · 404
+  // → 409 si le pret n'est pas rendu ou deja note
+  router.post('/:id/rating', (req, res) => {
+    const loan = loans.find((l) => l.id === req.params.id)
+    if (!loan) {
+      return res.status(404).json({ error: 'Prêt introuvable' })
+    }
+
+    const tool = tools.find((t) => t.id === loan.toolId)
+    const userId = req.get('X-User-Id')
+    if (!tool || tool.ownerId !== userId) {
+      return res
+        .status(403)
+        .json({ error: 'Seul le propriétaire peut noter l\'emprunteur' })
+    }
+
+    const { rating } = req.body ?? {}
+    if (!Number.isInteger(rating) || rating < 1 || rating > 5) {
+      return res.status(400).json({
+        error: 'La note doit être un entier de 1 à 5',
+        field: 'rating',
+      })
+    }
+
+    if (loan.status !== 'returned') {
+      return res
+        .status(409)
+        .json({ error: 'Seul un prêt rendu peut être noté' })
+    }
+    if (loan.rating !== undefined) {
+      return res.status(409).json({ error: 'Ce prêt a déjà été noté' })
+    }
+
+    loan.rating = rating
+    res.json(loan)
+  })
+
   return router
 }
 
