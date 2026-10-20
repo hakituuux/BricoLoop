@@ -1,5 +1,6 @@
 import express from 'express'
 import { tools, users } from './data.js'
+import { createLoansRouter } from './routes/loans.js'
 
 export function createApp() {
   const app = express()
@@ -25,6 +26,8 @@ export function createApp() {
     const owner = users.find((u) => u.id === tool.ownerId) ?? null
     res.json({ ...tool, owner })
   })
+
+  app.use('/api/loans', createLoansRouter())
 
   return app
 }
