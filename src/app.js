@@ -44,14 +44,10 @@ export function createApp() {
     }
 
     res.json({
-      id: outil.id,
-      ownerId: outil.ownerId,
-      name: outil.name,
-      category: outil.category,
-      description: outil.description,
-      status: outil.status,
+      ...outil,
       firstName: proprio ? proprio.firstName : '',
       district: proprio ? proprio.district : '',
+      owner: proprio,
     })
   })
 
@@ -154,6 +150,30 @@ export function createApp() {
     }
     loans.push(demande)
     res.status(201).json(demande)
+  })
+
+  // US-08 : mes demandes (X-User-Id), avec le nom de l'outil,
+  // triees par date de debut croissante
+  app.get('/api/loans/mine', (req, res) => {
+    const userId = req.get('X-User-Id')
+    const user = users.find((u) => u.id === userId)
+
+    if (!user) {
+      return res
+        .status(401)
+        .json({ error: 'Choisissez un profil (en-tete X-User-Id)' })
+    }
+
+    const mine = loans
+      .filter((l) => l.borrowerId === user.id)
+      .map((l) => {
+        const tool = tools.find((t) => t.id === l.toolId)
+        return { ...l, toolName: tool ? tool.name : null }
+      })
+      // dates AAAA-MM-JJ : l'ordre alphabetique est l'ordre chronologique
+      .sort((a, b) => a.startDate.localeCompare(b.startDate))
+
+    res.json(mine)
   })
 
   return app

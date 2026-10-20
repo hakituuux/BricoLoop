@@ -40,7 +40,7 @@ function App() {
 
   let user = null
   for (let i = 0; i < users.length; i++) {
-    if (users[i].id === userId) {
+    if (String(users[i].id) === String(userId)) {
       user = users[i]
     }
   }

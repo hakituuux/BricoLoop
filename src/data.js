@@ -17,33 +17,6 @@ export const users = [
   { id: '4', firstName: 'FRANSCECO', district: 'Stade' },
 ]
 
-export const loans = [
-  {
-    id: '1',
-    toolId: '1',
-    borrowerId: '2',
-    startDate: '2026-10-01',
-    endDate: '2026-10-10',
-    status: 'pending',
-  },
-  {
-    id: '2',
-    toolId: '1',
-    borrowerId: '3',
-    startDate: '2026-10-18',
-    endDate: '2026-10-25',
-    status: 'pending',
-  },
-  {
-    id: '3',
-    toolId: '6',
-    borrowerId: '4',
-    startDate: '2026-11-02',
-    endDate: '2026-11-08',
-    status: 'pending',
-  },
-]
-
 export const tools = [
   {
     id: '1',
@@ -91,7 +64,7 @@ export const tools = [
     name: 'Tondeuse',
     category: 'Jardinage',
     description: 'Tondeuse a gazon',
-    status: 'available',
+    status: 'lent',
   },
   {
     id: '7',
@@ -108,5 +81,50 @@ export const tools = [
     category: 'Autre',
     description: 'Hache pour le bois',
     status: 'available',
+  },
+]
+
+// demandes d'emprunt (status : pending, accepted, refused)
+// volontairement dans le desordre pour verifier le tri par startDate
+export const loans = [
+  {
+    id: '1',
+    toolId: '6',
+    borrowerId: '1',
+    startDate: '2026-11-10',
+    endDate: '2026-11-15',
+    status: 'accepted',
+  },
+  {
+    id: '2',
+    toolId: '3',
+    borrowerId: '1',
+    startDate: '2026-10-25',
+    endDate: '2026-10-27',
+    status: 'pending',
+  },
+  {
+    id: '3',
+    toolId: '8',
+    borrowerId: '2',
+    startDate: '2026-11-02',
+    endDate: '2026-11-03',
+    status: 'pending',
+  },
+  {
+    id: '4',
+    toolId: '2',
+    borrowerId: '1',
+    startDate: '2026-11-01',
+    endDate: '2026-11-04',
+    status: 'refused',
+  },
+  {
+    id: '5',
+    toolId: '1',
+    borrowerId: '3',
+    startDate: '2026-10-22',
+    endDate: '2026-10-23',
+    status: 'accepted',
   },
 ]
