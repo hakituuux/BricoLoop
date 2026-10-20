@@ -85,8 +85,8 @@ export const tools = [
 ]
 
 // statuts d'un pret : pending, accepted, refused, returned
-// une demande de demo en attente : Pierre veut emprunter la pelle de Jacque
 export const loans = [
+  // une demande de demo en attente : Pierre veut emprunter la pelle de Jacque
   {
     id: '1',
     toolId: '3',
@@ -94,10 +94,10 @@ export const loans = [
     startDate: '2026-11-02',
     endDate: '2026-11-05',
     status: 'pending',
-// un pret de demo deja accepte : Pierre a emprunte la tondeuse de Paul
-export const loans = [
+  },
+  // un pret de demo deja accepte : Pierre a emprunte la tondeuse de Paul
   {
-    id: '1',
+    id: '2',
     toolId: '6',
     borrowerId: '1',
     startDate: '2026-10-15',
