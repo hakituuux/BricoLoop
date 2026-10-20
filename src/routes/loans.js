@@ -13,6 +13,14 @@ function estDateValide(valeur) {
   return !Number.isNaN(d.getTime()) && d.toISOString().slice(0, 10) === valeur
 }
 
+// date du jour au format AAAA-MM-JJ (heure locale du serveur)
+function aujourdhui() {
+  const d = new Date()
+  const mois = String(d.getMonth() + 1).padStart(2, '0')
+  const jour = String(d.getDate()).padStart(2, '0')
+  return d.getFullYear() + '-' + mois + '-' + jour
+}
+
 function prochainId() {
   const max = loans.reduce((m, l) => Math.max(m, Number(l.id) || 0), 0)
   return String(max + 1)
@@ -48,6 +56,13 @@ function creerDemande(req, res) {
     return res.status(400).json({
       error: 'La date de fin doit être au format AAAA-MM-JJ',
       field: 'endDate',
+    })
+  }
+  // pas de demande dans le passe (aujourd'hui est accepte)
+  if (startDate < aujourdhui()) {
+    return res.status(400).json({
+      error: 'La date de début ne peut pas être dans le passé',
+      field: 'startDate',
     })
   }
   if (endDate < startDate) {
