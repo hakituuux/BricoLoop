@@ -17,6 +17,33 @@ export const users = [
   { id: '4', firstName: 'FRANSCECO', district: 'Stade' },
 ]
 
+export const loans = [
+  {
+    id: '1',
+    toolId: '1',
+    borrowerId: '2',
+    startDate: '2026-10-01',
+    endDate: '2026-10-10',
+    status: 'pending',
+  },
+  {
+    id: '2',
+    toolId: '1',
+    borrowerId: '3',
+    startDate: '2026-10-18',
+    endDate: '2026-10-25',
+    status: 'pending',
+  },
+  {
+    id: '3',
+    toolId: '6',
+    borrowerId: '4',
+    startDate: '2026-11-02',
+    endDate: '2026-11-08',
+    status: 'pending',
+  },
+]
+
 export const tools = [
   {
     id: '1',

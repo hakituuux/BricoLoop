@@ -7,7 +7,6 @@ function Catalogue(props) {
   const profil = useProfil()
   const [outils, setOutils] = useState(null)
   const [erreur, setErreur] = useState('')
-  const [outilChoisi, setOutilChoisi] = useState(null)
 
   useEffect(() => {
     let annule = false
@@ -46,23 +45,6 @@ function Catalogue(props) {
     )
   }
 
-  if (outilChoisi !== null) {
-    return (
-      <div>
-        <button
-          onClick={() => {
-            setOutilChoisi(null)
-          }}
-        >
-          Retour au catalogue
-        </button>
-        <h2>{outilChoisi.name}</h2>
-        <p>{outilChoisi.category}</p>
-        <p className="badge">{libelleStatut(outilChoisi.status)}</p>
-      </div>
-    )
-  }
-
   return (
     <div>
       <button onClick={props.onRetour}>Retour</button>
@@ -74,7 +56,7 @@ function Catalogue(props) {
             className="carte"
             key={outil.id}
             onClick={() => {
-              setOutilChoisi(outil)
+              props.onChoisir(outil.id)
             }}
           >
             <p>

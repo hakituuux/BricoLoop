@@ -3,6 +3,8 @@ import './App.css'
 import { apiFetch } from './api.js'
 import { ProfilContext } from './ProfilContext.jsx'
 import Catalogue from './Catalogue.jsx'
+import Fiche from './Fiche.jsx'
+import MesOutils from './MesOutils.jsx'
 
 function App() {
   const [users, setUsers] = useState([])
@@ -10,6 +12,7 @@ function App() {
   const [erreurUsers, setErreurUsers] = useState('')
   const [chargement, setChargement] = useState(true)
   const [page, setPage] = useState('accueil')
+  const [outilId, setOutilId] = useState(null)
 
   useEffect(() => {
     let annule = false
@@ -86,6 +89,13 @@ function App() {
             >
               Catalogue
             </button>
+            <button
+              onClick={() => {
+                setPage('mes-outils')
+              }}
+            >
+              Ou sont mes outils
+            </button>
           </div>
         </header>
 
@@ -105,6 +115,13 @@ function App() {
                 }}
               >
                 Voir le catalogue
+              </button>{' '}
+              <button
+                onClick={() => {
+                  setPage('mes-outils')
+                }}
+              >
+                Ou sont mes outils
               </button>
             </div>
           )}
@@ -112,6 +129,25 @@ function App() {
             <Catalogue
               onRetour={() => {
                 setPage('accueil')
+              }}
+              onChoisir={(id) => {
+                setOutilId(id)
+                setPage('fiche')
+              }}
+            />
+          )}
+          {page === 'mes-outils' && (
+            <MesOutils
+              onRetour={() => {
+                setPage('accueil')
+              }}
+            />
+          )}
+          {page === 'fiche' && (
+            <Fiche
+              outilId={outilId}
+              onRetour={() => {
+                setPage('catalogue')
               }}
             />
           )}
