@@ -83,3 +83,16 @@ export const tools = [
     status: 'available',
   },
 ]
+
+// statuts d'un pret : pending, accepted, refused, returned
+// une demande de demo en attente : Pierre veut emprunter la pelle de Jacque
+export const loans = [
+  {
+    id: '1',
+    toolId: '3',
+    borrowerId: '1',
+    startDate: '2026-11-02',
+    endDate: '2026-11-05',
+    status: 'pending',
+  },
+]
