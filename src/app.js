@@ -1,7 +1,5 @@
 import express from 'express'
-import { tools, users } from './data.js'
-import { signalerOutilAbime } from './routes/damage.js'
-import { createLoansRouter } from './routes/loans.js'
+import { loans, tools, users } from './data.js'
 
 export function createApp() {
   const app = express()
@@ -28,8 +26,29 @@ export function createApp() {
     res.json({ ...tool, owner })
   })
 
-  app.post('/api/tools/:id/damage', signalerOutilAbime)
-  app.use('/api/loans', createLoansRouter())
+  // US-08 : mes demandes (X-User-Id), avec le nom de l'outil,
+  // triees par date de debut croissante
+  app.get('/api/loans/mine', (req, res) => {
+    const userId = req.get('X-User-Id')
+    const user = users.find((u) => u.id === userId)
+
+    if (!user) {
+      return res
+        .status(401)
+        .json({ error: 'Choisissez un profil (en-tete X-User-Id)' })
+    }
+
+    const mine = loans
+      .filter((l) => l.borrowerId === user.id)
+      .map((l) => {
+        const tool = tools.find((t) => t.id === l.toolId)
+        return { ...l, toolName: tool ? tool.name : null }
+      })
+      // dates AAAA-MM-JJ : l'ordre alphabetique est l'ordre chronologique
+      .sort((a, b) => a.startDate.localeCompare(b.startDate))
+
+    res.json(mine)
+  })
 
   return app
 }

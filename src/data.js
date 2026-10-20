@@ -84,24 +84,47 @@ export const tools = [
   },
 ]
 
-// statuts d'un pret : pending, accepted, refused, returned
+// demandes d'emprunt (status : pending, accepted, refused)
+// volontairement dans le desordre pour verifier le tri par startDate
 export const loans = [
-  // une demande de demo en attente : Pierre veut emprunter la pelle de Jacque
   {
     id: '1',
-    toolId: '3',
-    borrowerId: '1',
-    startDate: '2026-11-02',
-    endDate: '2026-11-05',
-    status: 'pending',
-  },
-  // un pret de demo deja accepte : Pierre a emprunte la tondeuse de Paul
-  {
-    id: '2',
     toolId: '6',
     borrowerId: '1',
-    startDate: '2026-10-15',
-    endDate: '2026-10-25',
+    startDate: '2026-11-10',
+    endDate: '2026-11-15',
+    status: 'accepted',
+  },
+  {
+    id: '2',
+    toolId: '3',
+    borrowerId: '1',
+    startDate: '2026-10-25',
+    endDate: '2026-10-27',
+    status: 'pending',
+  },
+  {
+    id: '3',
+    toolId: '8',
+    borrowerId: '2',
+    startDate: '2026-11-02',
+    endDate: '2026-11-03',
+    status: 'pending',
+  },
+  {
+    id: '4',
+    toolId: '2',
+    borrowerId: '1',
+    startDate: '2026-11-01',
+    endDate: '2026-11-04',
+    status: 'refused',
+  },
+  {
+    id: '5',
+    toolId: '1',
+    borrowerId: '3',
+    startDate: '2026-10-22',
+    endDate: '2026-10-23',
     status: 'accepted',
   },
 ]
